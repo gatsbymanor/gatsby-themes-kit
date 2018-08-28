@@ -2,10 +2,10 @@
   "name": "gatsby-themes-kit",
   "version": "0.1.2",
   "description": "A theme development library for Gatsby",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
+  "bin": {
+    "gtk": "./index.js"
   },
+  "main": "./lib/entry.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/gatsbymanor/gatsby-themes-kit#readme",
   "dependencies": {
     "fs-extra": "^7.0.0",
-    "js-yaml": "^3.12.0"
+    "js-yaml": "^3.12.0",
+    "yargs": "^12.0.1"
   }
 }

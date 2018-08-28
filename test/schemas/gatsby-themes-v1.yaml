@@ -1,0 +1,57 @@
+---
+version: 1
+themesDir: themes
+theme: gatsby-theme-identity
+themes:
+  gatsby-theme-identity:
+    plugins:
+      - resolve: gatsby-source-contentful
+        options:
+          spaceId: process.env.CONTENTFUL_SPACE_ID
+          accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN
+    data:
+      bio: >
+        contentfulBio (
+          name: {
+            regex: "/identity/i"
+          }
+        )
+        {
+          name
+          displayName
+          headline
+          photo {
+            sizes(maxWidth: 120, quality: 95) {
+              src
+            }
+          }
+        }
+      backgroundImage: >
+        contentfulAsset (
+            title: {
+              regex: "/(nyc-chinatown-bw)/i"
+            }
+          )
+          {
+            title
+            sizes(maxWidth: 1200, quality: 95) {
+              src
+            }
+          }
+      socialIcons: >
+        allContentfulSocialProfiles (
+          filter: {
+            name: {
+              regex: "/(github|medium|twitter)/i"
+            }
+          }
+        )
+        {
+          edges {
+            node {
+              name
+              url
+              className
+            }
+          }
+        }
