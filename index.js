@@ -155,10 +155,19 @@ const installSourcePlugins = (plugins) => {
 
 const getThemeJsonConfig = () => {
   const { theme, themesDir, themes } = readGatsbyThemesConfig()
-
   let themeJson = themes[theme]
-  themeJson.plugins = loadPluginsForGatsbyConfig(themeJson.plugins)
 
+  if (themeJson.hasOwnProperty('plugins')) {
+    if (themeJson.plugins === null) {
+      throw Error(`Error in gatsby-themes.yaml: 'plugins' property cannot be empty.`)
+    }
+
+    themeJson.plugins = loadPluginsForGatsbyConfig(themeJson.plugins)
+    return themeJson
+  }
+
+  // TODO: Lots of downstream effects if this is not empty list
+  themeJson.plugins = []
   return themeJson
 }
 
@@ -192,11 +201,19 @@ const copyHandler = (argv) => {
   return fs.copy(themeDirPublicDir, parentDirPublicDir)
 }
 
+const initHandler = (argv) => {
+  const project = path.join(process.cwd(), `gatsby-themes.yaml`)
+  const template = path.join(__dirname, 'templates', 'gatsby-themes-v1.yaml')
+  return fs.copy(template, project)
+}
+
 const processHandler = (argv) => {
   createDataConfigForTheme()
 
   let themeJson = getThemeJsonConfig()
-  installSourcePlugins(themeJson.plugins)
+  if (themeJson.hasOwnProperty('plugins')) {
+    installSourcePlugins(themeJson.plugins)
+  }
 
   const { theme, themesDir } = readGatsbyThemesConfig()
   const themePath = path.join(process.cwd(), themesDir, theme)
@@ -212,6 +229,12 @@ const processHandler = (argv) => {
 }
 
 yargs
+  .command({
+    command: 'init',
+    aliases: [],
+    desc: 'Create a new gatsby-themes.yaml file for themes management.',
+    handler: initHandler
+  })
   .command({
     command: 'copy',
     aliases: [],

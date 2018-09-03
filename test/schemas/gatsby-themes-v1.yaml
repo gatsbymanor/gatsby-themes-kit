@@ -1,3 +1,5 @@
+# Master schema of all possible options
+
 ---
 version: 1
 themesDir: themes
@@ -26,32 +28,9 @@ themes:
             }
           }
         }
-      backgroundImage: >
-        contentfulAsset (
-            title: {
-              regex: "/(nyc-chinatown-bw)/i"
-            }
-          )
-          {
+      siteData: >
+        site {
+          siteMetadata {
             title
-            sizes(maxWidth: 1200, quality: 95) {
-              src
-            }
-          }
-      socialIcons: >
-        allContentfulSocialProfiles (
-          filter: {
-            name: {
-              regex: "/(github|medium|twitter)/i"
-            }
-          }
-        )
-        {
-          edges {
-            node {
-              name
-              url
-              className
-            }
           }
         }
