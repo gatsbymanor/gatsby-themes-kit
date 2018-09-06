@@ -4,10 +4,11 @@ themesDir: themes
 theme: gatsby-theme-identity
 themes:
   gatsby-theme-identity:
-    data:
-      siteData: >
+    data: >
+      {
         site {
           siteMetadata {
             title
           }
         }
+      }

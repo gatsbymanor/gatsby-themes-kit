@@ -11,8 +11,15 @@ themes:
         options:
           spaceId: process.env.CONTENTFUL_SPACE_ID
           accessToken: process.env.CONTENTFUL_DELIVERY_TOKEN
-    data:
-      bio: >
+    data: >
+      {
+
+        site {
+          siteMetadata {
+            title
+          }
+        }
+
         contentfulBio (
           name: {
             regex: "/identity/i"
@@ -28,9 +35,5 @@ themes:
             }
           }
         }
-      siteData: >
-        site {
-          siteMetadata {
-            title
-          }
-        }
+
+      }
