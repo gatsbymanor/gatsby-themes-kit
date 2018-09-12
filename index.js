@@ -4,6 +4,8 @@ const yargs = require('yargs')
 const yaml = require('js-yaml')
 const fs = require('fs-extra')
 const loader = require('./lib/loader')
+const Schema = require('./cli/schema')
+
 const { spawn, spawnSync, execSync } = require('child_process')
 
 
