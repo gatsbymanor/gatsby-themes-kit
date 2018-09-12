@@ -5,6 +5,7 @@ const yaml = require('js-yaml')
 const fs = require('fs-extra')
 const loader = require('./lib/loader')
 const Schema = require('./cli/schema')
+const Reader = require('./cli/schema')
 
 const { spawn, spawnSync, execSync } = require('child_process')
 
@@ -77,19 +78,6 @@ const loadPluginsForGatsbyConfig = (plugins) => {
 }
 
 
-const readGatsbyThemesConfig = () => {
-  const gatsbyThemesConfigPath = path.join(process.cwd(), `gatsby-themes.yaml`)
-
-  try {
-    const isThemesConfigPresent = fs.existsSync(gatsbyThemesConfigPath)
-    if (!isThemesConfigPresent)
-      return null
-
-      return loader.loadYaml(gatsbyThemesConfigPath)
-  } catch (e) {
-    console.log(e);
-  }
-}
 
 const hasPluginInDependencies = (dependencies, plugin) => {
   let pluginName = getNameOfGatsbyPlugin(plugin)
@@ -102,7 +90,9 @@ const hasPluginInDependencies = (dependencies, plugin) => {
 
 const findMissingPluginPkgs = (plugins) => {
 
-  const { theme, themesDir } = readGatsbyThemesConfig()
+
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
   const themePath = path.join(process.cwd(), themesDir, theme)
 
   const pkgJson = loader.loadJsonSync(path.join(themePath, `package.json`))
@@ -123,7 +113,9 @@ const findMissingPluginPkgs = (plugins) => {
 
 
 const installSourcePlugins = (plugins) => {
-  const { theme, themesDir } = readGatsbyThemesConfig()
+
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
   const themePath = path.join(process.cwd(), themesDir, theme)
 
   const missingPlugins = findMissingPluginPkgs(plugins)
@@ -156,7 +148,8 @@ const installSourcePlugins = (plugins) => {
 }
 
 const getThemeJsonConfig = () => {
-  const { theme, themesDir, themes } = readGatsbyThemesConfig()
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
   let themeJson = themes[theme]
 
   if (themeJson.hasOwnProperty('plugins')) {
@@ -174,7 +167,8 @@ const getThemeJsonConfig = () => {
 }
 
 const createDataConfigForTheme = () => {
-  const { theme, themesDir, themes } = readGatsbyThemesConfig()
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
 
   let themeJson = getThemeJsonConfig()
 
@@ -195,7 +189,8 @@ const getGatsbyArgs = (argv) => {
 }
 
 const copyHandler = (argv) => {
-  const { theme, themesDir, themes } = readGatsbyThemesConfig()
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
 
   const themeDirPublicDir = path.join(process.cwd(), themesDir, theme, `public`)
   const parentDirPublicDir = path.join(process.cwd(), 'public')
@@ -217,7 +212,9 @@ const processHandler = (argv) => {
     installSourcePlugins(themeJson.plugins)
   }
 
-  const { theme, themesDir } = readGatsbyThemesConfig()
+
+  const config = Reader.readGatsbyThemesConfig()
+  const { theme, themesDir } = config
   const themePath = path.join(process.cwd(), themesDir, theme)
   const gatsbyArgs = getGatsbyArgs(process.argv)
 
