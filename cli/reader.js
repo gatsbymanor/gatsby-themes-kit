@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
-const loader = require('./lib/loader')
+const path = require('path')
+const loader = require('../lib/loader')
 
 exports.readGatsbyThemesYaml = () => {
   const gatsbyThemesConfigPath = path.join(process.cwd(), `gatsby-themes.yaml`)
