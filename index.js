@@ -178,12 +178,42 @@ const processHandler = (argv) => {
   })
 }
 
+
+const getHandler = (argv) => {
+  let githubRepo = argv.name
+  let alias = argv.name
+  if (argv.as !== undefined)
+    alias = argv.as
+
+  const config = Reader.readGatsbyThemesYaml()
+  const { themesDir } = config
+  const themePath = `${themesDir}/${alias}`
+
+  return spawnSync(`gatsby new ${themePath} ${githubRepo}`, {
+    cwd: process.cwd(),
+    shell: true,
+    stdio: `inherit`,
+    env: process.env,
+  })
+}
 yargs
   .command({
     command: 'init',
     aliases: [],
     desc: 'Create a new gatsby-themes.yaml file for themes management.',
     handler: initHandler
+  })
+  .command({
+    command: 'get <name>',
+    aliases: [],
+    desc: 'Downloads theme <name> to your themes directory from github.',
+    handler: getHandler,
+    builder: cmd =>
+      cmd
+        .option(`as`, {
+          type: `string`,
+          describe: `Download using a different name.`,
+        }),
   })
   .command({
     command: 'copy',
