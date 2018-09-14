@@ -178,6 +178,39 @@ const processHandler = (argv) => {
   })
 }
 
+
+const getHandler = (argv) => {
+  let githubRepo = argv.name
+  let alias = argv.name
+  if (argv.as !== undefined)
+    alias = argv.as
+
+  const config = Reader.readGatsbyThemesYaml()
+  const { themesDir } = config
+  const themePath = `${themesDir}/${alias}`
+
+  return spawnSync(`gatsby new ${themePath} ${githubRepo}`, {
+    cwd: process.cwd(),
+    shell: true,
+    stdio: `inherit`,
+    env: process.env,
+  })
+}
+
+const setHandler = (argv) => {
+  let config = Reader.readGatsbyThemesYaml()
+  config.theme = argv.name
+
+  const GatsbyThemesYamlFile = yaml.safeDump(config)
+  let outputFile = path.join(process.cwd(), `gatsby-themes.yaml`)
+
+  const themeConfigWriteStream = fs.createWriteStream(outputFile)
+  const themeConfigBuffer = new Buffer(GatsbyThemesYamlFile)
+  themeConfigWriteStream.write(themeConfigBuffer)
+  themeConfigWriteStream.end()
+
+}
+
 yargs
   .command({
     command: 'init',
@@ -186,9 +219,27 @@ yargs
     handler: initHandler
   })
   .command({
+    command: 'get <name>',
+    aliases: [],
+    desc: 'Downloads theme <name> to your themes directory from github.',
+    handler: getHandler,
+    builder: cmd =>
+      cmd
+        .option(`as`, {
+          type: `string`,
+          describe: `Download using a different name.`,
+        }),
+  })
+  .command({
+    command: 'set <name>',
+    aliases: [],
+    desc: 'Sets <name> as the default theme in your gatsby-themes.yaml file.',
+    handler: setHandler
+  })
+  .command({
     command: 'copy',
     aliases: [],
-    desc: 'Copy the public folder from the default theme.',
+    desc: 'Copy public folder of default theme to the parent project.',
     handler: copyHandler
   })
   .command({
