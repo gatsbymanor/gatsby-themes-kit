@@ -239,7 +239,7 @@ yargs
   .command({
     command: 'copy',
     aliases: [],
-    desc: 'Copy the public folder from the default theme.',
+    desc: 'Copy public folder of default theme to the parent project.',
     handler: copyHandler
   })
   .command({
