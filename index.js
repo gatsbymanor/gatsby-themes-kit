@@ -196,6 +196,21 @@ const getHandler = (argv) => {
     env: process.env,
   })
 }
+
+const setHandler = (argv) => {
+  let config = Reader.readGatsbyThemesYaml()
+  config.theme = argv.name
+
+  const GatsbyThemesYamlFile = yaml.safeDump(config)
+  let outputFile = path.join(process.cwd(), `gatsby-themes.yaml`)
+
+  const themeConfigWriteStream = fs.createWriteStream(outputFile)
+  const themeConfigBuffer = new Buffer(GatsbyThemesYamlFile)
+  themeConfigWriteStream.write(themeConfigBuffer)
+  themeConfigWriteStream.end()
+
+}
+
 yargs
   .command({
     command: 'init',
@@ -214,6 +229,12 @@ yargs
           type: `string`,
           describe: `Download using a different name.`,
         }),
+  })
+  .command({
+    command: 'set <name>',
+    aliases: [],
+    desc: 'Sets <name> as the default theme in your gatsby-themes.yaml file.',
+    handler: setHandler
   })
   .command({
     command: 'copy',
